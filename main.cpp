@@ -237,7 +237,13 @@ int DoSerial(HPMPluginInstance &inst, int no)
     std::stringstream args;
     put(args, (uint32_t)0x1840306);
 
-    if (inst.command(no, 'DVEn', args.str())) {
+    int tries;
+    for (tries = 0; tries < 20; tries++) {
+        if (inst.command(no, 'DVEn', args.str()) == 0)
+            break;
+        usleep(100000);
+    }
+    if (tries == 20) {
         printf("Failed.\n");
         return 1;
     }
